@@ -1,0 +1,41 @@
+class NumerTelefonu():
+    def __init__(self, numer_telefonu):
+        self.numer = numer_telefonu
+        
+        if len(str(self.numer)) != 9:  #sprawdzam czy numer ma 9 znaków
+            print("Bledny numer")
+        
+    @property
+    def wojewodztwo(self):
+        wojewodztwo1 = ""
+        tempNum = str(self.numer)
+        if (tempNum[0] == "4" and tempNum[1] == "2"):    #sprawdzam, czy numer jest z Łodzi
+            wojewodztwo1 = "Lodz"
+            print (wojewodztwo1)
+        elif (tempNum[0] == "2" and tempNum[1] == "2"): #sprawdzam czy numer jest z z Warszawy
+            wojewodztwo1 = "Warszawa"
+            print (wojewodztwo1)
+        else: 
+            wojewodztwo1 = "Inne"
+            print (wojewodztwo1)
+        return wojewodztwo1
+    
+    def __repr__(self):
+        cyfry_slownik = {
+            '1' : "jeden",
+            '2' : "dwa",
+            '3' : "trzy",
+            '4' : "cztery",
+            '5' : "piec",
+            '6' : "szesc",
+            '7' : "siedem",
+            '8' : "osiem",
+            '9' : "dziewiec",
+            '0' : "zero",
+        }
+        zmienna = ""
+        for x in str(self.numer):
+            zmienna += (cyfry_slownik[x] + " ")
+        return zmienna
+nr = NumerTelefonu(numer)
+print(nr)
