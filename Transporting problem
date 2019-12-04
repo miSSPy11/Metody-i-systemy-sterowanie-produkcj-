@@ -1,0 +1,97 @@
+from pulp import *
+
+browary = ["X", "Y"]
+bary = ["bulka", "pelex", "kebab"]
+
+iloscTowaru = {"X" : 10, "Y" : 20}
+zamowienia = {"bulka" : 19, "pelex" : 5, "kebab" : 10}
+
+kosztXBarBulka = 15
+kosztXBarPelex = 10
+kosztXBarKebab = 5
+
+kosztYBarBulka = 2
+kosztYBarPelex = 15
+kosztYBarKebab = 20
+
+# Sprawdzam cene za dojazd w przypadku niepełnego busa
+
+if(kosztXBarBulka%5==0):
+
+    kosztXBarBulka=kosztXBarBulka/5
+
+else:
+
+    kosztXBarBulka=(kosztXBarBulka//5)+1
+    
+if(kosztXBarPelex%5==0):
+
+    kosztXBarPelex=kosztXBarPelex/5
+
+else:
+
+    kosztXBarPelex=(kosztXBarPelex//5)+1
+    
+if(kosztXBarKebab%5==0):
+
+    kosztXBarKebab=kosztXBarKebab/5
+
+else:
+
+    kosztXBarKebab=(kosztXBarKebab//5)+1
+    
+if(kosztYBarBulka%5==0):
+
+    kosztYBarBulka=kosztYBarBulka/5
+
+else:
+
+    kosztYBarBulka=(kosztYBarBulka//5)+1
+if(kosztYBarPelex%5==0):
+
+    kosztYBarPelex=kosztYBarPelex/5
+
+else:
+
+    kosztYBarPelex=(kosztYBarPelex//5)+1
+if(kosztYBarKebab%5==0):
+
+    kosztYBarKebab=kosztYBarKebab/5
+
+else:
+
+    kosztYBarKebab=(kosztYBarKebab//5)+1
+
+prob = LpProblem("Transportation problem", LpMinimize)
+
+XdoBulki = LpVariable("XdoBulki", 0)
+XdoPelexa = LpVariable("XdoPelexa", 0)
+XdoKebaba = LpVariable("XdoKebaba", 0)
+YdoBulki = LpVariable("YdoBulki", 0)
+YdoPelexa = LpVariable("YdoPelexa", 0)
+YdoKebaba = LpVariable("YdoKebaba", 0)
+
+#wirtualne źrodlo, które jest potrzebne, by zoptymalizować wynik mimo za małej ilości piwa w browarze
+kosztDzbanPOL_BULKA = LpVariable("kosztDzbanPOL_BULKA", 0) kosztDzbanPOL_PELEX = LpVariable("kosztDzbanPOL_PELEX", 0)
+kosztDzbanPOL_KEBAB = LpVariable("kosztDzbanPOL_KEBAB", 0)
+
+
+
+prob += kosztXBarBulka * XdoBulki + kosztXBarPelex * XdoPelexa + kosztXBarKebab * XdoKebaba + kosztYBarBulka * YdoBulki + kosztYBarPelex * YdoPelexa + kosztYBarKebab * YdoKebaba + 100 * kosztDzbanPOL_BULKA + 100 * kosztDzbanPOL_PELEX + 100 * kosztDzbanPOL_KEBAB
+prob += XdoBulki + XdoPelexa + XdoKebaba <= iloscTowaru["X"],0
+prob += YdoBulki + YdoPelexa + YdoKebaba  <= iloscTowaru["Y"],0
+prob += XdoBulki + YdoBulki + kosztDzbanPOL_BULKA == zamowienia["bulka"],0
+prob += XdoPelexa + YdoPelexa + kosztDzbanPOL_PELEX == zamowienia["pelex"],0
+prob += XdoKebaba + YdoKebaba + + kosztDzbanPOL_KEBAB == zamowienia["kebab"],0
+prob += kosztDzbanPOL_BULKA + kosztDzbanPOL_PELEX + kosztDzbanPOL_KEBAB >=0
+
+prob.solve()
+# The status of the solution is printed to the screen
+print("Status:", LpStatus[prob.status])
+# Each of the variables is printed with it's resolved optimum value
+for v in prob.variables():
+    print(v.name, "=", v.varValue)
+print("Koszty wyniosły {}".format( value(prob.objective)))
+
+
+
