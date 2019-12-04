@@ -1,0 +1,78 @@
+from pulp import *
+import pandas as pd
+
+prob = LpProblem("Najmniejsze koszty",LpMinimize)
+
+# 2 zmienne
+pIg=LpVariable("pIg",0) # Poniedziałek Igor godziny
+pMg=LpVariable("pMg",0) # Poniedziałek Marek godziny
+pFg=LpVariable("pFg",0) # Poniedziałek Franek godziny
+pPg=LpVariable("pPg",0) # Poniedziałek Piotrek godziny
+pAg=LpVariable("pAg",0) # Poniedziałek Ania godziny
+pZg=LpVariable("pZg",0) # Poniedziałek Zenon godziny
+
+wIg=LpVariable("wIg",0) # Wtorek Igor godziny
+wMg=LpVariable("wMg",0) # Wtorek Marek godziny
+wFg=LpVariable("wFg",0) # Wtorek Franek godziny
+wPg=LpVariable("wPg",0) # Wtorek Piotrek godziny
+wAg=LpVariable("wAg",0) # Wtorek Ania godziny
+wZg=LpVariable("wZg",0) # Wtorek Zenon godziny
+
+srIg=LpVariable("srIg",0) # Sroda Igor godziny
+srMg=LpVariable("srMg",0) # Sroda Marek godziny
+srFg=LpVariable("srFg",0) # Sroda Franek godziny
+srPg=LpVariable("srPg",0) # Sroda Piotrek godziny
+srAg=LpVariable("srAg",0) # Sroda Ania godziny
+srZg=LpVariable("srZg",0) # Sroda Zenon godziny
+
+cIg=LpVariable("cIg",0) # Czwartek Igor godziny
+cMg=LpVariable("cMg",0) # Czwartek Marek godziny
+cFg=LpVariable("cFg",0) # Czwartek Franek godziny
+cPg=LpVariable("cPg",0) # Czwartek Piotrek godziny
+cAg=LpVariable("cAg",0) # Czwartek Ania godziny
+cZg=LpVariable("cZg",0) # Czwartek Zenon godziny
+
+ptIg=LpVariable("ptIg",0) # Piątek Igor godziny
+ptMg=LpVariable("ptMg",0) # Piątek Marek godziny 
+ptFg=LpVariable("ptFg",0) # Piątek Franek godziny
+ptPg=LpVariable("ptPg",0) # Piątek Piotrek godziny
+ptAg=LpVariable("ptAg",0) # Piątek Ania godziny
+ptZg=LpVariable("ptZg",0) # Piątek Zenon godziny
+
+sIg=LpVariable("sIg",0) # Sobota Igor godziny
+sMg=LpVariable("sMg",0) # Sobota Marek godziny
+sFg=LpVariable("sFg",0) # Sobota Franek godziny
+sPg=LpVariable("sPg",0) # Sobota Piotrek godziny
+sAg=LpVariable("sAg",0) # Sobota Ania godziny
+sZg=LpVariable("sZg",0) # Sobota Zenon godziny
+
+Ig=pIg+wIg+srIg+cIg+ptIg+sIg             # wszystkie godziny Igora
+Mg=pMg+wMg+srMg+cMg+ptMg+sMg             # wszystkie godziny Marka
+Fg=pFg+wFg+srFg+cFg+ptFg+sFg             # wszystkie godziny Franka
+Ag=pAg+wAg+srAg+cAg+ptAg+sAg             # wszystkie godziny Ani
+Zg=pZg+wZg+srZg+cZg+ptZg+sZg             # wszystkie godziny Zenona
+Pg=pPg+wPg+srPg+cPg+ptPg+sPg             # wszystkie godziny Piotrka
+
+
+prob += 170*Ig+60*Mg+80*Fg+200*Pg+90*Ag+10*Zg #koszt pracownika
+prob += pIg + wIg + srIg + cIg + ptIg + sIg <= 4	# rownania ograniczen
+prob += pMg+wMg+srMg+cMg+ptMg+sMg<=4
+prob += pFg+wFg+srFg+cFg+ptFg+sFg<=3
+prob += pPg+wPg+srPg+cPg+ptPg+sPg<=8
+prob += pAg+wAg+srAg+cAg+ptAg+sAg<=10
+prob += pZg+wZg+srZg+cZg+ptZg+sZg<=5
+
+prob += pIg+pMg+pFg+pPg+pAg+pZg ==8
+prob += wIg+wMg+wFg+wPg+wAg+wZg==4
+prob += srIg+srMg+srFg+srPg+srAg+srZg==4
+prob += cIg+cMg+cFg+cPg+cAg+cZg==4
+prob += ptIg+ptMg+ptFg+ptPg+ptAg+ptZg==8
+prob += sIg+sMg+sFg+sPg+sAg+sZg==2
+
+prob.solve()
+# The status of the solution is printed to the screen
+print("Status:", LpStatus[prob.status])
+# Each of the variables is printed with it's resolved optimum value
+for v in prob.variables():
+    print(v.name, "=", v.varValue)
+print("Koszty pracownika wyniesie {} zl‚  ".format( value(prob.objective)))
